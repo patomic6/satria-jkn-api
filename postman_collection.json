@@ -1,0 +1,376 @@
+{
+  "info": {
+    "name": "SATRIA JKN API",
+    "description": "REST API untuk sistem deteksi fraud dan analisis klaim JKN",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/dashboard/overview",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "dashboard", "overview"]
+            }
+          }
+        },
+        {
+          "name": "Get Claim Trends",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/dashboard/trends",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "dashboard", "trends"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Klaim",
+      "item": [
+        {
+          "name": "Get All Claims",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/klaim",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "klaim"]
+            }
+          }
+        },
+        {
+          "name": "Create Claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomor_klaim\": \"CLM-TEST-001\",\n  \"total_biaya\": 1500000,\n  \"status\": \"Pending\",\n  \"provider\": \"Hospital A\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/klaim",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "klaim"]
+            }
+          }
+        },
+        {
+          "name": "Search Claims",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/klaim/search?q=CL001",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "klaim", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "CL001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Anomaly Chart",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/klaim/anomaly-chart",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "klaim", "anomaly-chart"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "Get All Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/alerts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "alerts"]
+            }
+          }
+        },
+        {
+          "name": "Get High Risk Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/alerts?risk_level=High",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "alerts"],
+              "query": [
+                {
+                  "key": "risk_level",
+                  "value": "High"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"klaim_id\": \"CL001\",\n  \"alert_level\": \"High\",\n  \"reason_code\": \"Suspicious Pattern\",\n  \"action\": \"Investigate\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/alerts",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "alerts"]
+            }
+          }
+        },
+        {
+          "name": "Get Alerts Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/alerts/summary",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "alerts", "summary"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Trail",
+      "item": [
+        {
+          "name": "Get All Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/audit-trail",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "audit-trail"]
+            }
+          }
+        },
+        {
+          "name": "Create Audit Log",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"entity\": \"Klaim\",\n  \"entity_id\": \"CL001\",\n  \"action\": \"Updated Status\",\n  \"user\": \"Admin\",\n  \"details\": \"Status changed to Approved\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/audit-trail",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "audit-trail"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Get Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/reports",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "reports"]
+            }
+          }
+        },
+        {
+          "name": "Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Fraud Summary\",\n  \"date_range\": \"2025-11-01 to 2025-11-30\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/reports/generate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "reports", "generate"]
+            }
+          }
+        },
+        {
+          "name": "Get Report Preview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/reports/preview",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "reports", "preview"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Faskes",
+      "item": [
+        {
+          "name": "Get All Faskes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/faskes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "faskes"]
+            }
+          }
+        },
+        {
+          "name": "Create Faskes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode_faskes\": \"HOSP-C\",\n  \"tipe\": \"Hospital\",\n  \"wilayah\": \"Surabaya\",\n  \"status\": \"Active\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/faskes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "faskes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/settings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "settings"]
+            }
+          }
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notification\": {\n    \"email\": true,\n    \"in_app\": true\n  },\n  \"theme\": \"Dark\",\n  \"alert_thresholds\": {\n    \"high\": 85,\n    \"medium\": 55,\n    \"low\": 25\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/settings",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "settings"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

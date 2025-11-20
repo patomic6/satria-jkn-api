@@ -1,0 +1,196 @@
+// ============================================
+//  SATRIA JKN (Privacy-Safe)
+//  Prisma Schema (Next.js + PostgreSQL/MySQL)
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // atau "postgresql" jika pakai Postgres
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 1. Peserta (tanpa data pribadi)
+// ============================================
+model Peserta {
+  peserta_id         String   @id @default(uuid())
+  status_keanggotaan String
+  segmentasi         String?
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  // relasi
+  Pelayanan Pelayanan[]
+}
+
+// ============================================
+// 2. Fasilitas Kesehatan
+// ============================================
+model FasilitasKesehatan {
+  faskes_id    String   @id @default(uuid())
+  kode_faskes  String   @unique
+  tipe         String?
+  wilayah      String?
+  status       String?
+  created_at   DateTime @default(now())
+
+  Pelayanan    Pelayanan[]
+}
+
+// ============================================
+// 3. Pelayanan
+// ============================================
+model Pelayanan {
+  pelayanan_id      String    @id @default(uuid())
+  peserta_id        String
+  faskes_id         String
+  tanggal_pelayanan DateTime?
+  jenis_layanan     String?
+  created_at        DateTime  @default(now())
+
+  peserta   Peserta           @relation(fields: [peserta_id], references: [peserta_id])
+  faskes    FasilitasKesehatan @relation(fields: [faskes_id], references: [faskes_id])
+  RekamMedis RekamMedis[]
+  KlaimPelayanan KlaimPelayanan[]
+}
+
+// ============================================
+// 4. Master Diagnosis
+// ============================================
+model Diagnosis {
+  code       String  @id
+  nama       String?
+  deskripsi  String?
+
+  RekamMedis RekamMedis[]
+}
+
+// ============================================
+// 5. Master Tindakan
+// ============================================
+model Tindakan {
+  code          String  @id
+  nama          String?
+  tarif_standar Float?
+
+  RekamMedis RekamMedis[]
+}
+
+// ============================================
+// 6. Rekam Medis
+// ============================================
+model RekamMedis {
+  rekam_id       String   @id @default(uuid())
+  pelayanan_id   String
+  diagnosis_code String?
+  tindakan_code  String?
+  catatan_kode   String?
+  created_at     DateTime @default(now())
+
+  pelayanan Pelayanan @relation(fields: [pelayanan_id], references: [pelayanan_id])
+  diagnosis Diagnosis? @relation(fields: [diagnosis_code], references: [code])
+  tindakan  Tindakan?  @relation(fields: [tindakan_code], references: [code])
+}
+
+// ============================================
+// 7. Klaim
+// ============================================
+model Klaim {
+  klaim_id      String    @id @default(uuid())
+  nomor_klaim   String    @unique
+  tgl_pengajuan DateTime?
+  total_biaya   Float?
+  status        String?
+  created_at    DateTime  @default(now())
+
+  Pembayaran         Pembayaran[]
+  KlaimPelayanan     KlaimPelayanan[]
+  FraudAlert         FraudAlert[]
+  ApiVerifikasiLog   ApiVerifikasiLog[]
+  AiRecommendation   AiRecommendation[]
+}
+
+// ============================================
+// 8. Klaim_Pelayanan (Many-to-Many)
+// ============================================
+model KlaimPelayanan {
+  klaim_id       String
+  pelayanan_id   String
+  biaya_terkait  Float?
+  keterangan     String?
+
+  klaim      Klaim      @relation(fields: [klaim_id], references: [klaim_id])
+  pelayanan  Pelayanan  @relation(fields: [pelayanan_id], references: [pelayanan_id])
+
+  @@id([klaim_id, pelayanan_id])
+}
+
+// ============================================
+// 9. Pembayaran
+// ============================================
+model Pembayaran {
+  pembayaran_id    String   @id @default(uuid())
+  klaim_id         String
+  jumlah           Float?
+  status_pembayaran String?
+  metode_pembayaran String?
+  tgl_pembayaran   DateTime?
+
+  klaim Klaim @relation(fields: [klaim_id], references: [klaim_id])
+}
+
+// ============================================
+// 10. Fraud Alert
+// ============================================
+model FraudAlert {
+  alert_id     String   @id @default(uuid())
+  klaim_id     String
+  alert_level  String?
+  reason_code  String?
+  is_resolved  Boolean  @default(false)
+  created_at   DateTime @default(now())
+  resolved_at  DateTime?
+
+  klaim Klaim @relation(fields: [klaim_id], references: [klaim_id])
+}
+
+// ============================================
+// 11. API Verifikasi Log
+// ============================================
+model ApiVerifikasiLog {
+  log_id    String   @id @default(uuid())
+  klaim_id  String?
+  endpoint  String?
+  status    String?
+  timestamp DateTime @default(now())
+
+  klaim Klaim? @relation(fields: [klaim_id], references: [klaim_id])
+}
+
+// ============================================
+// 12. AI Recommendation
+// ============================================
+model AiRecommendation {
+  rec_id          String   @id @default(uuid())
+  klaim_id        String?
+  agent_version   String?
+  score           Float?
+  rekomendasi     String?
+  created_at      DateTime @default(now())
+
+  klaim Klaim? @relation(fields: [klaim_id], references: [klaim_id])
+}
+
+// ============================================
+// 13. Audit Trail
+// ============================================
+model AuditTrail {
+  audit_id  String   @id @default(uuid())
+  entity    String
+  entity_id String
+  action    String
+  timestamp DateTime @default(now())
+}
